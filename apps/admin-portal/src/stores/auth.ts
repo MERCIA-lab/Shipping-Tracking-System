@@ -24,16 +24,23 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       login: async (email: string, password: string) => {
-        // TODO: Replace with actual API call
-        const mockUser: User = {
-          id: '1',
-          email,
-          name: 'Admin User',
-          role: 'super_admin',
-        };
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Unable to sign in');
+        }
+
+        const data = await response.json();
         set({
-          user: mockUser,
-          token: 'mock-jwt-token',
+          user: data.user,
+          token: data.token,
           isAuthenticated: true,
         });
       },
