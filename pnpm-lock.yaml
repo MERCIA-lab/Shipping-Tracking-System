@@ -201,7 +201,45 @@ importers:
 
   services/analytics-service: {}
 
-  services/auth-service: {}
+  services/auth-service:
+    dependencies:
+      '@nestjs/common':
+        specifier: ^10.2.0
+        version: 10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/config':
+        specifier: ^3.1.0
+        version: 3.3.0(@nestjs/common@10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.1.14)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@nestjs/core':
+        specifier: ^10.2.0
+        version: 10.4.22(@nestjs/common@10.4.22(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@11.1.28)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      class-validator:
+        specifier: ^0.14.0
+        version: 0.14.4
+      reflect-metadata:
+        specifier: ^0.1.13
+        version: 0.1.14
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.2
+    devDependencies:
+      '@nestjs/cli':
+        specifier: ^10.2.0
+        version: 10.4.9
+      '@types/node':
+        specifier: ^20.5.0
+        version: 20.19.43
+      ts-loader:
+        specifier: ^9.5.0
+        version: 9.6.2(typescript@5.9.3)(webpack@5.97.1)
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.2(@types/node@20.19.43)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.2.2
+        version: 5.9.3
 
   services/cart-service: {}
 
