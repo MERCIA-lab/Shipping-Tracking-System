@@ -2,31 +2,31 @@ import { IsString, IsNumber, IsEnum, IsOptional, IsUUID, Min } from 'class-valid
 
 export class CreateProductDto {
   @IsUUID()
-  storeId: string;
+  storeId!: string;
 
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  sku: string;
+  sku!: string;
 
   @IsNumber()
   @Min(0)
-  price: number;
+  price!: number;
 
   @IsNumber()
   @Min(0)
-  cost: number;
+  cost!: number;
 
   @IsNumber()
   @Min(0)
-  stock: number;
+  stock!: number;
 
   @IsString()
-  category: string;
+  category!: string;
 
   @IsEnum(['active', 'draft', 'archived'])
-  status: 'active' | 'draft' | 'archived';
+  status!: 'active' | 'draft' | 'archived';
 
   @IsOptional()
   @IsString()

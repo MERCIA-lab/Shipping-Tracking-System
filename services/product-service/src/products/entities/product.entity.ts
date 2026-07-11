@@ -13,55 +13,55 @@ import {
 @Index(['category'])
 export class Product {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'uuid' })
-  storeId: string;
+  storeId!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ unique: true })
-  sku: string;
+  sku!: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  price: number;
+  price!: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  cost: number;
+  cost!: number;
 
   @Column({ type: 'int', default: 0 })
-  stock: number;
+  stock!: number;
 
   @Column()
-  category: string;
+  category!: string;
 
   @Column({ enum: ['active', 'draft', 'archived'], default: 'draft' })
-  status: 'active' | 'draft' | 'archived';
+  status!: 'active' | 'draft' | 'archived';
 
   @Column({ nullable: true })
-  image: string;
+  image?: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description?: string;
 
   @Column({ type: 'json', nullable: true })
-  variants: Record<string, any>;
+  variants?: Record<string, any>;
 
   @Column({ type: 'int', default: 0 })
-  views: number;
+  views!: number;
 
   @Column({ type: 'int', default: 0 })
-  sales: number;
+  sales!: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @Column({ nullable: true })
-  deletedAt: Date;
+  deletedAt?: Date;
 
   // Calculated field (not persisted)
   get profitMargin(): number {
