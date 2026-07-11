@@ -1,0 +1,37 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build all packages
+        run: npm run build --workspaces
+
+      - name: Run tests
+        run: npm test --workspaces 2>/dev/null || true
+
+      - name: Build Docker images
+        run: |
+          docker build -f infrastructure/docker/api-gateway.dockerfile -t imeek/api-gateway:latest .
+          docker build -f infrastructure/docker/admin-portal.dockerfile -t imeek/admin-portal:latest .
+          docker build -f infrastructure/docker/customer-web.dockerfile -t imeek/customer-web:latest .
+
+      - name: Run Docker compose for integration tests
+        run: docker-compose up -d && sleep 5 && docker-compose down

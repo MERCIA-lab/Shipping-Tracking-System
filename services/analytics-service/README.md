@@ -1,0 +1,1 @@
+Dashboard KPIs, charts, sales trends, customer behavior, powered by ClickHouse.

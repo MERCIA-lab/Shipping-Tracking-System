@@ -1,0 +1,1 @@
+Stripe, PayPal, Apple Pay, Google Pay integration and payment settlement.

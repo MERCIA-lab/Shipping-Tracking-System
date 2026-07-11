@@ -1,0 +1,1 @@
+Amazon and eBay product import, synchronization, pricing updates, powered by BullMQ.

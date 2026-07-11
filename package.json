@@ -1,0 +1,27 @@
+{
+  "name": "imeek-platform",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace apps/admin-portal",
+    "dev:admin": "npm run dev --workspace apps/admin-portal",
+    "dev:customer": "npm run dev --workspace apps/customer-web",
+    "dev:landing": "npm run dev --workspace apps/landing-web",
+    "dev:gateway": "npm run dev --workspace apps/api-gateway",
+    "build": "npm run build --workspaces",
+    "build:admin": "npm run build --workspace apps/admin-portal",
+    "build:customer": "npm run build --workspace apps/customer-web",
+    "build:gateway": "npm run build --workspace apps/api-gateway",
+    "preview": "npm run preview --workspace apps/admin-portal",
+    "lint": "npm run lint --workspaces",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

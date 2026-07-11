@@ -1,0 +1,1 @@
+Coupons, discounts, flash sales, gift cards, referrals, and campaigns.

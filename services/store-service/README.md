@@ -1,0 +1,1 @@
+Multi-store support, store creation, configuration, themes, and domains.

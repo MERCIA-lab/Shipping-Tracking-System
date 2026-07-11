@@ -1,0 +1,6 @@
+{
+  "name": "@imeek/mobile-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Flutter mobile application for customers and merchants"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@imeek/analytics-service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Analytics and business intelligence microservice",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main"
+  }
+}

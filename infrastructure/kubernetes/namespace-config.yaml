@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: imeek
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: imeek-config
+  namespace: imeek
+data:
+  NODE_ENV: production
+  LOG_LEVEL: info
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: imeek-secrets
+  namespace: imeek
+type: Opaque
+stringData:
+  DATABASE_URL: postgresql://imeek:password@postgres:5432/imeek_platform
+  REDIS_URL: redis://redis:6379
+  JWT_SECRET: your-jwt-secret-key-here

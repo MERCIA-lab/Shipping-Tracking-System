@@ -1,0 +1,1 @@
+Product indexing, search, autocomplete, suggestions, filters, powered by Elasticsearch.

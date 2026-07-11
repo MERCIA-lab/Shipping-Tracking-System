@@ -1,0 +1,1 @@
+Stock tracking, warehouses, movements, transfers, and low-stock alerts.

@@ -1,0 +1,1 @@
+Customer-to-seller messaging, attachments, read status, powered by Socket.IO.

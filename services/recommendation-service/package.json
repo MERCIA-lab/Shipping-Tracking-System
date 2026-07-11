@@ -1,0 +1,12 @@
+{
+  "name": "@imeek/recommendation-service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered recommendations microservice",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main"
+  }
+}

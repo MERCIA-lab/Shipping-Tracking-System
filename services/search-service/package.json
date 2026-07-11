@@ -1,0 +1,12 @@
+{
+  "name": "@imeek/search-service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Product search and discovery microservice",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main"
+  }
+}

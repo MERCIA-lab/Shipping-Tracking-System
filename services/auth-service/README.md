@@ -1,0 +1,1 @@
+Authentication and authorization service handling JWT, OAuth2, and RBAC.

@@ -1,0 +1,12 @@
+{
+  "name": "@imeek/integration-service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Marketplace integration microservice",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main"
+  }
+}

@@ -1,0 +1,1 @@
+Cart persistence, abandoned cart handling, and session management.
