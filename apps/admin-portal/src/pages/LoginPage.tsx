@@ -28,17 +28,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-pink-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-slate-900 rounded-2xl border border-slate-800 p-8 shadow-2xl">
+        <div className="bg-white rounded-2xl border border-pink-200 p-8 shadow-xl">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-white">iMeek</h1>
-            <p className="text-slate-400 mt-2">Admin Portal</p>
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-pink-500 to-pink-600 rounded-full mb-4">
+              <span className="text-2xl font-bold text-white">📦</span>
+            </div>
+            <h1 className="text-3xl font-bold text-pink-900">iMeek</h1>
+            <p className="text-pink-600 mt-2">Shipping Dashboard</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-pink-900 mb-2">
                 Email
               </label>
               <input
@@ -47,13 +50,13 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@imeek.com"
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-pink-50 border border-pink-200 rounded-lg text-pink-900 placeholder-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-pink-900 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -63,32 +66,32 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-pink-50 border border-pink-200 rounded-lg text-pink-900 placeholder-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-pink-600 hover:text-pink-700"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            {error && <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-2 rounded-lg text-sm">{error}</div>}
+            {error && <div className="bg-pink-100 border border-pink-300 text-pink-700 px-4 py-2 rounded-lg text-sm">{error}</div>}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 text-white font-medium py-2 rounded-lg transition mt-6"
+              className="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 disabled:bg-pink-300 text-white font-medium py-3 rounded-lg transition mt-6 shadow-lg hover:shadow-xl"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <p className="text-center text-slate-400 text-sm mt-6">
-            Demo: Use any email with password <span className="font-mono text-slate-300">demo</span>
+          <p className="text-center text-pink-600 text-sm mt-6">
+            Demo: Use any email with password <span className="font-mono text-pink-700">demo</span>
           </p>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { TrendingUp, ShoppingCart, Users, Eye, AlertTriangle } from 'lucide-reac
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-const COLORS = ['#3b82f6', '#06b6d4', '#8b5cf6', '#ec4899'];
+const COLORS = ['#ec4899', '#f472b6', '#db2777', '#be185d'];
 
 interface DashboardSummary {
   revenue: number;
