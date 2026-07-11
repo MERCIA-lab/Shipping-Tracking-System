@@ -1,16 +1,30 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Plus, Search, Filter, Edit2, Trash2, Eye, AlertCircle } from 'lucide-react';
-import { useProductsStore } from '../stores/products';
+import { useProductsStore, fetchProducts } from '../stores/products';
 import ProductTableView from '../components/ProductTableView';
 import ProductModal from '../components/ProductModal';
 
 export default function Products() {
-  const { products } = useProductsStore();
+  const { products, loading, error } = useProductsStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        useProductsStore.setState({ loading: true, error: null });
+        const data = await fetchProducts();
+        useProductsStore.setState({ products: data, loading: false });
+      } catch (err: any) {
+        useProductsStore.setState({ error: err.message || 'Failed to load products', loading: false });
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -57,6 +71,14 @@ export default function Products() {
           Add Product
         </button>
       </div>
+
+      {error && (
+        <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-300">
+          {error}
+        </div>
+      )}
+
+      {loading && <p className="text-sm text-slate-400">Loading products...</p>}
 
       {/* Alert for Low Stock */}
       {lowStockCount > 0 && (

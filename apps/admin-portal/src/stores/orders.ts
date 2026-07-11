@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
 export interface Order {
   id: string;
   orderNumber: string;
@@ -31,89 +33,8 @@ interface OrdersState {
   getOrder: (id: string) => Order | undefined;
 }
 
-const mockOrders: Order[] = [
-  {
-    id: '1',
-    orderNumber: '#ORD-001234',
-    customerId: 'cust-1',
-    customerName: 'John Doe',
-    customerEmail: 'john@example.com',
-    items: [
-      { productId: '1', productName: 'Wireless Headphones', quantity: 1, price: 99.99 },
-    ],
-    subtotal: 99.99,
-    tax: 10.0,
-    shipping: 5.0,
-    total: 114.99,
-    status: 'delivered',
-    paymentMethod: 'stripe',
-    shippingAddress: '123 Main St, New York, NY 10001',
-    trackingNumber: 'FDX123456789',
-    createdAt: '2024-01-10T10:00:00Z',
-    updatedAt: '2024-01-12T15:30:00Z',
-  },
-  {
-    id: '2',
-    orderNumber: '#ORD-001233',
-    customerId: 'cust-2',
-    customerName: 'Jane Smith',
-    customerEmail: 'jane@example.com',
-    items: [
-      { productId: '2', productName: 'USB-C Cable', quantity: 2, price: 12.99 },
-      { productId: '3', productName: 'Phone Case', quantity: 1, price: 19.99 },
-    ],
-    subtotal: 45.97,
-    tax: 4.6,
-    shipping: 0,
-    total: 50.57,
-    status: 'shipped',
-    paymentMethod: 'paypal',
-    shippingAddress: '456 Oak Ave, Los Angeles, CA 90001',
-    trackingNumber: 'UPS987654321',
-    createdAt: '2024-01-09T14:20:00Z',
-    updatedAt: '2024-01-11T09:00:00Z',
-  },
-  {
-    id: '3',
-    orderNumber: '#ORD-001232',
-    customerId: 'cust-3',
-    customerName: 'Bob Wilson',
-    customerEmail: 'bob@example.com',
-    items: [{ productId: '5', productName: 'Laptop Stand', quantity: 1, price: 44.99 }],
-    subtotal: 44.99,
-    tax: 4.5,
-    shipping: 5.0,
-    total: 54.49,
-    status: 'processing',
-    paymentMethod: 'stripe',
-    shippingAddress: '789 Pine Rd, Chicago, IL 60601',
-    createdAt: '2024-01-08T11:30:00Z',
-    updatedAt: '2024-01-08T11:30:00Z',
-  },
-  {
-    id: '4',
-    orderNumber: '#ORD-001231',
-    customerId: 'cust-4',
-    customerName: 'Alice Johnson',
-    customerEmail: 'alice@example.com',
-    items: [
-      { productId: '1', productName: 'Wireless Headphones', quantity: 1, price: 99.99 },
-      { productId: '4', productName: 'Wireless Mouse', quantity: 1, price: 34.99 },
-    ],
-    subtotal: 134.98,
-    tax: 13.5,
-    shipping: 5.0,
-    total: 153.48,
-    status: 'paid',
-    paymentMethod: 'bank_transfer',
-    shippingAddress: '321 Elm St, Houston, TX 77001',
-    createdAt: '2024-01-07T09:15:00Z',
-    updatedAt: '2024-01-08T08:00:00Z',
-  },
-];
-
 export const useOrdersStore = create<OrdersState>((set) => ({
-  orders: mockOrders,
+  orders: [],
 
   addOrder: (order) => {
     const newOrder: Order = {
@@ -136,6 +57,21 @@ export const useOrdersStore = create<OrdersState>((set) => ({
   },
 
   getOrder: (id) => {
-    return mockOrders.find((o) => o.id === id);
+    let current: Order[] = [];
+    set((state) => {
+      current = state.orders;
+      return state;
+    });
+    return current.find((o) => o.id === id);
   },
 }));
+
+export const fetchOrders = async (storeId = 'demo-store') => {
+  const response = await fetch(`${API_BASE_URL}/orders?storeId=${storeId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch orders');
+  }
+
+  const data = await response.json();
+  return data.data ?? [];
+};

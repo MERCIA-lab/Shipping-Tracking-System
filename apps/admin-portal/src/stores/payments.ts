@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
 export interface Payment {
   id: string;
   orderId: string;
@@ -19,64 +21,8 @@ interface PaymentsState {
   getPayment: (id: string) => Payment | undefined;
 }
 
-const mockPayments: Payment[] = [
-  {
-    id: '1',
-    orderId: '1',
-    orderNumber: '#ORD-001234',
-    amount: 114.99,
-    status: 'completed',
-    method: 'stripe',
-    customerName: 'John Doe',
-    createdAt: '2024-01-10T10:00:00Z',
-    processedAt: '2024-01-10T10:05:00Z',
-  },
-  {
-    id: '2',
-    orderId: '2',
-    orderNumber: '#ORD-001233',
-    amount: 50.57,
-    status: 'completed',
-    method: 'paypal',
-    customerName: 'Jane Smith',
-    createdAt: '2024-01-09T14:20:00Z',
-    processedAt: '2024-01-09T14:25:00Z',
-  },
-  {
-    id: '3',
-    orderId: '3',
-    orderNumber: '#ORD-001232',
-    amount: 54.49,
-    status: 'pending',
-    method: 'bank_transfer',
-    customerName: 'Bob Wilson',
-    createdAt: '2024-01-08T11:30:00Z',
-  },
-  {
-    id: '4',
-    orderId: '4',
-    orderNumber: '#ORD-001231',
-    amount: 153.48,
-    status: 'completed',
-    method: 'stripe',
-    customerName: 'Alice Johnson',
-    createdAt: '2024-01-07T09:15:00Z',
-    processedAt: '2024-01-07T09:20:00Z',
-  },
-  {
-    id: '5',
-    orderId: '5',
-    orderNumber: '#ORD-001230',
-    amount: 89.99,
-    status: 'failed',
-    method: 'paypal',
-    customerName: 'Mike Brown',
-    createdAt: '2024-01-06T15:45:00Z',
-  },
-];
-
 export const usePaymentsStore = create<PaymentsState>((set) => ({
-  payments: mockPayments,
+  payments: [],
 
   addPayment: (payment) => {
     const newPayment: Payment = {
@@ -101,6 +47,21 @@ export const usePaymentsStore = create<PaymentsState>((set) => ({
   },
 
   getPayment: (id) => {
-    return mockPayments.find((p) => p.id === id);
+    let current: Payment[] = [];
+    set((state) => {
+      current = state.payments;
+      return state;
+    });
+    return current.find((p) => p.id === id);
   },
 }));
+
+export const fetchPayments = async (storeId = 'demo-store') => {
+  const response = await fetch(`${API_BASE_URL}/payments?storeId=${storeId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch payments');
+  }
+
+  const data = await response.json();
+  return data.data ?? [];
+};

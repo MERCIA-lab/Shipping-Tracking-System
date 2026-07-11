@@ -1,11 +1,25 @@
-import { useState, useMemo } from 'react';
-import { useOrdersStore } from '../stores/orders';
+import { useEffect, useState, useMemo } from 'react';
+import { useOrdersStore, fetchOrders } from '../stores/orders';
 import { Search, Eye, Printer } from 'lucide-react';
 
 export default function Orders() {
   const { orders, updateOrderStatus } = useOrdersStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      try {
+        useOrdersStore.setState({ loading: true, error: null });
+        const data = await fetchOrders();
+        useOrdersStore.setState({ orders: data, loading: false });
+      } catch (err: any) {
+        useOrdersStore.setState({ error: err.message || 'Failed to load orders', loading: false });
+      }
+    };
+
+    loadOrders();
+  }, []);
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
@@ -51,6 +65,8 @@ export default function Orders() {
         <h1 className="text-3xl font-semibold text-white">Orders</h1>
         <p className="text-slate-400 mt-1">Manage and track all orders</p>
       </div>
+
+      {orders.length === 0 && <p className="text-sm text-slate-400">Loading orders...</p>}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">

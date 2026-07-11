@@ -1,11 +1,25 @@
-import { useState, useMemo } from 'react';
-import { useCustomersStore } from '../stores/customers';
+import { useEffect, useState, useMemo } from 'react';
+import { useCustomersStore, fetchCustomers } from '../stores/customers';
 import { Search, Mail, Phone, MapPin } from 'lucide-react';
 
 export default function Customers() {
   const { customers } = useCustomersStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  useEffect(() => {
+    const loadCustomers = async () => {
+      try {
+        useCustomersStore.setState({ loading: true, error: null });
+        const data = await fetchCustomers();
+        useCustomersStore.setState({ customers: data, loading: false });
+      } catch (err: any) {
+        useCustomersStore.setState({ error: err.message || 'Failed to load customers', loading: false });
+      }
+    };
+
+    loadCustomers();
+  }, []);
 
   const filteredCustomers = useMemo(() => {
     return customers.filter((customer) => {

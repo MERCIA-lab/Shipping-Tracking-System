@@ -1,11 +1,25 @@
-import { useState, useMemo } from 'react';
-import { useInventoryStore } from '../stores/inventory';
+import { useEffect, useState, useMemo } from 'react';
+import { useInventoryStore, fetchInventory } from '../stores/inventory';
 import { AlertTriangle, Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function Inventory() {
   const { items, deleteItem } = useInventoryStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [warehouseFilter, setWarehouseFilter] = useState('');
+
+  useEffect(() => {
+    const loadInventory = async () => {
+      try {
+        useInventoryStore.setState({ loading: true, error: null });
+        const data = await fetchInventory();
+        useInventoryStore.setState({ items: data, loading: false });
+      } catch (err: any) {
+        useInventoryStore.setState({ error: err.message || 'Failed to load inventory', loading: false });
+      }
+    };
+
+    loadInventory();
+  }, []);
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {

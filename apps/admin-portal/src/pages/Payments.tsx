@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { usePaymentsStore } from '../stores/payments';
+import { useEffect, useState, useMemo } from 'react';
+import { usePaymentsStore, fetchPayments } from '../stores/payments';
 import { Search, CreditCard } from 'lucide-react';
 
 export default function Payments() {
@@ -7,6 +7,20 @@ export default function Payments() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [methodFilter, setMethodFilter] = useState('');
+
+  useEffect(() => {
+    const loadPayments = async () => {
+      try {
+        usePaymentsStore.setState({ loading: true, error: null });
+        const data = await fetchPayments();
+        usePaymentsStore.setState({ payments: data, loading: false });
+      } catch (err: any) {
+        usePaymentsStore.setState({ error: err.message || 'Failed to load payments', loading: false });
+      }
+    };
+
+    loadPayments();
+  }, []);
 
   const filteredPayments = useMemo(() => {
     return payments.filter((payment) => {

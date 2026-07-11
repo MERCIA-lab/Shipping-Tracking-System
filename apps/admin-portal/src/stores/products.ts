@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
 export interface Product {
   id: string;
   name: string;
@@ -25,81 +27,8 @@ interface ProductsState {
   getProduct: (id: string) => Product | undefined;
 }
 
-const mockProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Wireless Headphones',
-    sku: 'WH-001',
-    price: 99.99,
-    cost: 45.0,
-    stock: 25,
-    category: 'Electronics',
-    status: 'active',
-    description: 'Premium wireless headphones with noise cancellation',
-    image: 'https://via.placeholder.com/300x200?text=Headphones',
-    createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-15T10:00:00Z',
-  },
-  {
-    id: '2',
-    name: 'USB-C Cable',
-    sku: 'USB-001',
-    price: 12.99,
-    cost: 3.5,
-    stock: 1,
-    category: 'Accessories',
-    status: 'active',
-    description: '2m USB-C charging and data cable',
-    image: 'https://via.placeholder.com/300x200?text=USB+Cable',
-    createdAt: '2024-01-10T08:30:00Z',
-    updatedAt: '2024-01-10T08:30:00Z',
-  },
-  {
-    id: '3',
-    name: 'Phone Case',
-    sku: 'PC-001',
-    price: 19.99,
-    cost: 7.0,
-    stock: 5,
-    category: 'Accessories',
-    status: 'active',
-    description: 'Protective phone case for iPhone 14',
-    image: 'https://via.placeholder.com/300x200?text=Phone+Case',
-    createdAt: '2024-01-12T14:20:00Z',
-    updatedAt: '2024-01-12T14:20:00Z',
-  },
-  {
-    id: '4',
-    name: 'Wireless Mouse',
-    sku: 'WM-001',
-    price: 34.99,
-    cost: 15.0,
-    stock: 0,
-    category: 'Electronics',
-    status: 'active',
-    description: 'Ergonomic wireless mouse with USB receiver',
-    image: 'https://via.placeholder.com/300x200?text=Wireless+Mouse',
-    createdAt: '2024-01-08T09:15:00Z',
-    updatedAt: '2024-01-08T09:15:00Z',
-  },
-  {
-    id: '5',
-    name: 'Laptop Stand',
-    sku: 'LS-001',
-    price: 44.99,
-    cost: 20.0,
-    stock: 42,
-    category: 'Accessories',
-    status: 'active',
-    description: 'Adjustable aluminum laptop stand',
-    image: 'https://via.placeholder.com/300x200?text=Laptop+Stand',
-    createdAt: '2024-01-05T11:45:00Z',
-    updatedAt: '2024-01-05T11:45:00Z',
-  },
-];
-
 export const useProductsStore = create<ProductsState>((set) => ({
-  products: mockProducts,
+  products: [],
   loading: false,
   error: null,
 
@@ -130,6 +59,21 @@ export const useProductsStore = create<ProductsState>((set) => ({
   },
 
   getProduct: (id) => {
-    return mockProducts.find((p) => p.id === id);
+    let current: Product[] = [];
+    set((state) => {
+      current = state.products;
+      return state;
+    });
+    return current.find((p) => p.id === id);
   },
 }));
+
+export const fetchProducts = async (storeId = 'demo-store') => {
+  const response = await fetch(`${API_BASE_URL}/products?storeId=${storeId}&page=1&limit=50`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch products');
+  }
+
+  const data = await response.json();
+  return data.data ?? [];
+};
