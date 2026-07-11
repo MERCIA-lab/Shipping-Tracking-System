@@ -28,43 +28,16 @@ export class ProxyController {
     };
   }
 
-  @All('products*')
-  async proxyProducts(@Req() req, @Res() res) {
-    const target = this.proxyService.getServiceUrl('products');
+  @All('*path')
+  async proxyRoute(@Req() req: any, @Res() res: any) {
+    const rawPath = (req.originalUrl || '/').split('?')[0];
+    const segments = rawPath.split('/').filter(Boolean);
+    const service = segments[0] === 'api' ? segments[1] : segments[0];
+    const target = service ? this.proxyService.getServiceUrl(service) : null;
     await this.forwardRequest(req, res, target);
   }
 
-  @All('auth*')
-  async proxyAuth(@Req() req, @Res() res) {
-    const target = this.proxyService.getServiceUrl('auth');
-    await this.forwardRequest(req, res, target);
-  }
-
-  @All('orders*')
-  async proxyOrders(@Req() req, @Res() res) {
-    const target = this.proxyService.getServiceUrl('orders');
-    await this.forwardRequest(req, res, target);
-  }
-
-  @All('inventory*')
-  async proxyInventory(@Req() req, @Res() res) {
-    const target = this.proxyService.getServiceUrl('inventory');
-    await this.forwardRequest(req, res, target);
-  }
-
-  @All('payments*')
-  async proxyPayments(@Req() req, @Res() res) {
-    const target = this.proxyService.getServiceUrl('payments');
-    await this.forwardRequest(req, res, target);
-  }
-
-  @All('users*')
-  async proxyUsers(@Req() req, @Res() res) {
-    const target = this.proxyService.getServiceUrl('users');
-    await this.forwardRequest(req, res, target);
-  }
-
-  private async forwardRequest(req: any, res: any, targetUrl: string) {
+  private async forwardRequest(req: any, res: any, targetUrl: string | null) {
     if (!targetUrl) {
       return res.status(503).json({ error: 'Service unavailable' });
     }
@@ -88,6 +61,9 @@ export class ProxyController {
       }
 
       const response = await this.httpService.request(config).toPromise();
+      if (!response) {
+        return res.status(502).json({ error: 'Bad Gateway' });
+      }
       return res.status(response.status).send(response.data);
     } catch (error: any) {
       this.logger.error(`Proxy error: ${error.message}`, error);

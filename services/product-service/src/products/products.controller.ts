@@ -23,7 +23,7 @@ export class ProductsController {
    * POST /api/products
    */
   @Post()
-  async create(@Body() createProductDto: CreateProductDto) {
+  async create(@Body() createProductDto: CreateProductDto): Promise<any> {
     return await this.productsService.create(createProductDto);
   }
 
@@ -39,7 +39,7 @@ export class ProductsController {
     @Query('search') search?: string,
     @Query('category') category?: string,
     @Query('status') status?: string,
-  ) {
+  ): Promise<any> {
     return await this.productsService.findAll(
       storeId,
       parseInt(page),
@@ -55,7 +55,7 @@ export class ProductsController {
    * GET /api/products/categories?storeId=xxx
    */
   @Get('categories')
-  async getCategories(@Query('storeId') storeId: string) {
+  async getCategories(@Query('storeId') storeId: string): Promise<any> {
     return await this.productsService.getCategories(storeId);
   }
 
@@ -64,7 +64,7 @@ export class ProductsController {
    * GET /api/products/stats?storeId=xxx
    */
   @Get('stats')
-  async getStats(@Query('storeId') storeId: string) {
+  async getStats(@Query('storeId') storeId: string): Promise<any> {
     return await this.productsService.getStats(storeId);
   }
 
@@ -73,7 +73,7 @@ export class ProductsController {
    * GET /api/products/:id
    */
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<any> {
     return await this.productsService.findOne(id);
   }
 
@@ -82,7 +82,7 @@ export class ProductsController {
    * PATCH /api/products/:id
    */
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<any> {
     return await this.productsService.update(id, updateProductDto);
   }
 
@@ -91,7 +91,7 @@ export class ProductsController {
    * DELETE /api/products/:id
    */
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<any> {
     await this.productsService.remove(id);
     return { success: true, message: 'Product deleted' };
   }
@@ -101,7 +101,7 @@ export class ProductsController {
    * PATCH /api/products/:id/stock
    */
   @Patch(':id/stock')
-  async updateStock(@Param('id') id: string, @Body() { quantity }: { quantity: number }) {
+  async updateStock(@Param('id') id: string, @Body() { quantity }: { quantity: number }): Promise<any> {
     return await this.productsService.updateStock(id, quantity);
   }
 }

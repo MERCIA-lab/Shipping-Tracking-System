@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ProxyService {
-  private services = {
+  private readonly services: Record<string, string> = {
     products: process.env.PRODUCT_SERVICE_URL || 'http://localhost:3001',
     auth: process.env.AUTH_SERVICE_URL || 'http://localhost:3002',
     orders: process.env.ORDER_SERVICE_URL || 'http://localhost:3003',
@@ -11,7 +11,7 @@ export class ProxyService {
     users: process.env.USER_SERVICE_URL || 'http://localhost:3006',
   };
 
-  getServiceUrl(service: string): string {
+  getServiceUrl(service: string): string | null {
     return this.services[service] || null;
   }
 

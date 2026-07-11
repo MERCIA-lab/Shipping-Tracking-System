@@ -1,29 +1,66 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, In } from 'typeorm';
-import { Product } from './entities/product.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
+interface ProductRecord {
+  id: string;
+  storeId: string;
+  name: string;
+  sku: string;
+  price: number;
+  cost: number;
+  stock: number;
+  category: string;
+  status: 'active' | 'draft' | 'archived';
+  image?: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 @Injectable()
 export class ProductsService {
-  constructor(
-    @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
-  ) {}
+  private readonly products: ProductRecord[] = [
+    {
+      id: 'prod-1',
+      storeId: 'demo-store',
+      name: 'Wireless Headphones',
+      sku: 'WH-001',
+      price: 129.99,
+      cost: 79.99,
+      stock: 12,
+      category: 'Electronics',
+      status: 'active',
+      description: 'Noise-cancelling over-ear headphones',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: 'prod-2',
+      storeId: 'demo-store',
+      name: 'USB-C Cable',
+      sku: 'USB-001',
+      price: 19.99,
+      cost: 9.5,
+      stock: 3,
+      category: 'Accessories',
+      status: 'active',
+      description: 'Fast charging USB-C cable',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  ];
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
-    // Check for duplicate SKU
-    const existingSku = await this.productRepository.findOne({
-      where: { sku: createProductDto.sku },
-    });
+  async create(createProductDto: CreateProductDto): Promise<ProductRecord> {
+    const product: ProductRecord = {
+      id: `prod-${Date.now()}`,
+      ...createProductDto,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    } as ProductRecord;
 
-    if (existingSku) {
-      throw new ConflictException(`Product with SKU ${createProductDto.sku} already exists`);
-    }
-
-    const product = this.productRepository.create(createProductDto);
-    return await this.productRepository.save(product);
+    this.products.push(product);
+    return product;
   }
 
   async findAll(
@@ -33,90 +70,61 @@ export class ProductsService {
     search?: string,
     category?: string,
     status?: string,
-  ): Promise<{ data: Product[]; total: number; page: number; pages: number }> {
-    const where: any = { storeId, deletedAt: null };
-
-    if (category) where.category = category;
-    if (status) where.status = status;
-    if (search) {
-      where.name = Like(`%${search}%`);
-    }
-
-    const [products, total] = await this.productRepository.findAndCount({
-      where,
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { createdAt: 'DESC' },
+  ): Promise<{ data: ProductRecord[]; total: number; page: number; pages: number }> {
+    const filtered = this.products.filter((product) => {
+      const matchesStore = product.storeId === storeId;
+      const matchesSearch = !search || product.name.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = !category || product.category === category;
+      const matchesStatus = !status || product.status === status;
+      return matchesStore && matchesSearch && matchesCategory && matchesStatus;
     });
 
+    const start = (page - 1) * limit;
+    const data = filtered.slice(start, start + limit);
+
     return {
-      data: products,
-      total,
+      data,
+      total: filtered.length,
       page,
-      pages: Math.ceil(total / limit),
+      pages: Math.max(1, Math.ceil(filtered.length / limit)),
     };
   }
 
-  async findOne(id: string): Promise<Product> {
-    const product = await this.productRepository.findOne({
-      where: { id, deletedAt: null },
-    });
-
+  async findOne(id: string): Promise<ProductRecord> {
+    const product = this.products.find((item) => item.id === id);
     if (!product) {
       throw new NotFoundException(`Product ${id} not found`);
     }
-
     return product;
   }
 
-  async findByIds(ids: string[]): Promise<Product[]> {
-    return await this.productRepository.find({
-      where: {
-        id: In(ids),
-        deletedAt: null,
-      },
-    });
+  async findByIds(ids: string[]): Promise<ProductRecord[]> {
+    return this.products.filter((product) => ids.includes(product.id));
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+  async update(id: string, updateProductDto: UpdateProductDto): Promise<ProductRecord> {
     const product = await this.findOne(id);
-
-    // Check for duplicate SKU if changing it
-    if (updateProductDto.sku && updateProductDto.sku !== product.sku) {
-      const existingSku = await this.productRepository.findOne({
-        where: { sku: updateProductDto.sku },
-      });
-      if (existingSku) {
-        throw new ConflictException(`Product with SKU ${updateProductDto.sku} already exists`);
-      }
-    }
-
-    Object.assign(product, updateProductDto);
-    return await this.productRepository.save(product);
+    Object.assign(product, updateProductDto, { updatedAt: new Date().toISOString() });
+    return product;
   }
 
   async remove(id: string): Promise<void> {
-    const product = await this.findOne(id);
-    product.deletedAt = new Date();
-    await this.productRepository.save(product);
+    const index = this.products.findIndex((product) => product.id === id);
+    if (index === -1) {
+      throw new NotFoundException(`Product ${id} not found`);
+    }
+    this.products.splice(index, 1);
   }
 
   async getCategories(storeId: string): Promise<string[]> {
-    const results = await this.productRepository
-      .createQueryBuilder('product')
-      .select('DISTINCT product.category', 'category')
-      .where('product.storeId = :storeId', { storeId })
-      .andWhere('product.deletedAt IS NULL')
-      .getRawMany();
-
-    return results.map((r) => r.category).filter(Boolean);
+    return [...new Set(this.products.filter((product) => product.storeId === storeId).map((product) => product.category))];
   }
 
-  async updateStock(productId: string, quantity: number): Promise<Product> {
+  async updateStock(productId: string, quantity: number): Promise<ProductRecord> {
     const product = await this.findOne(productId);
-    product.stock += quantity;
-    if (product.stock < 0) product.stock = 0;
-    return await this.productRepository.save(product);
+    product.stock = Math.max(0, product.stock + quantity);
+    product.updatedAt = new Date().toISOString();
+    return product;
   }
 
   async getStats(storeId: string): Promise<{
@@ -125,13 +133,10 @@ export class ProductsService {
     lowStockCount: number;
     outOfStockCount: number;
   }> {
-    const products = await this.productRepository.find({
-      where: { storeId, deletedAt: null },
-    });
-
-    const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
-    const lowStockCount = products.filter((p) => p.stock <= 5 && p.stock > 0).length;
-    const outOfStockCount = products.filter((p) => p.stock === 0).length;
+    const products = this.products.filter((product) => product.storeId === storeId);
+    const totalValue = products.reduce((sum, product) => sum + product.price * product.stock, 0);
+    const lowStockCount = products.filter((product) => product.stock <= 5 && product.stock > 0).length;
+    const outOfStockCount = products.filter((product) => product.stock === 0).length;
 
     return {
       totalProducts: products.length,
